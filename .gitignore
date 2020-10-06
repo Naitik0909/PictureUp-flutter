@@ -1,0 +1,10 @@
+picture_up/.dart_tool
+picture_up/.idea
+picture_up/android
+picture_up/build
+picture_up/ios
+picture_up/test
+picture_up/.metadata
+picture_up/.packages
+picture_up/pictureup.iml
+picture_up/pubspec.lock
