@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:painter/painter.dart';
 import 'screens/draw_bar.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'components/pill.dart';
 
 void main() => runApp(MyApp());
 
@@ -64,78 +65,64 @@ class _DrawingPageState extends State<DrawingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PictureUs'),
+        title: const Text('PictureUp'),
         actions: actions,
         bottom: PreferredSize(
           child: DrawBar(_controller),
           preferredSize: Size(MediaQuery.of(context).size.width, 30.0),
         ),
       ),
-      body: AspectRatio(
-          aspectRatio: 1.0,
-          child: Container(
-            child: Column(
+      body: Container(
+        // previously container was rapped inside aspectratio
+        margin: EdgeInsets.only(bottom: 10.0),
+        child: Column(
+          children: [
+            SizedBox(height: 3.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(height: 10.0),
                 LinearPercentIndicator(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width-75.0,
                   lineHeight: 20.0,
-                  percent: 0.1,
+                  percent: 0.55,
                   backgroundColor: Colors.grey,
                   progressColor: Colors.blue,
                 ),
-                SizedBox(height: 10.0,),
-                Expanded(child: Painter(_controller)),
-
-                TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                    labelText: 'Enter Your Guess',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.send),
-                  onPressed: (){},
-                ),
-                  ),
-                ),
-                Icon(Icons.arrow_drop_down),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Card(
-                        elevation: 5.0,
-                        color: Colors.lightBlueAccent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                        child: Row(
-                          children: [
-                            CircleAvatar(radius: 20.0,),
-                            SizedBox(width: 5.0,),
-                            Text('Naitik')
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Card(
-                        elevation: 5.0,
-                        color: Colors.lightBlueAccent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                        child: Row(
-                          children: [
-                            CircleAvatar(radius: 20.0,),
-                            SizedBox(width: 5.0,),
-                            Text('Jayanth')
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                CircleAvatar(child: Text('55'), radius: 15.0,)
               ],
             ),
-          ),
+            SizedBox(
+              height: 3.0,
+            ),
+            Container(
+              constraints: BoxConstraints.tightFor(
+                  width: MediaQuery.of(context).size.width, height: 320.0),
+              child: Painter(_controller),
+            ),
+            Icon(Icons.arrow_drop_down),
+            //  ListView(
+            // children: [
+            Container(
+              constraints: BoxConstraints.tightFor(
+                  width: MediaQuery.of(context).size.width - 80.0,
+                  height: 150.0),
+              child: PlayersPill(),
+            ),
+            // )
+
+            TextField(
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                labelText: 'Enter Your Guess',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
-
-
