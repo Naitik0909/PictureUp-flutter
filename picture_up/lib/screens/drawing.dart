@@ -14,20 +14,20 @@ class DrawingPage extends StatefulWidget {
 }
 
 class _DrawingPageState extends State<DrawingPage> {
-  bool _finished;
+//  bool _finished;
   PainterController _controller;
 
   @override
   void initState() {
     super.initState();
-    _finished = false;
+//    _finished = false;
     _controller = _newController();
   }
 
   PainterController _newController() {
     PainterController controller = PainterController();
-    controller.thickness = 5.0;
-    controller.backgroundColor = Colors.green;
+    controller.thickness = 3.0;
+    controller.backgroundColor = Colors.lightBlueAccent;
     return controller;
   }
 
@@ -56,6 +56,7 @@ class _DrawingPageState extends State<DrawingPage> {
     ];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,  // To prevent overflowing when keyboard is triggered
       appBar: AppBar(
         title: const Text('PictureUp'),
         actions: actions,

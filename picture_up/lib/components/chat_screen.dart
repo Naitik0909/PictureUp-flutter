@@ -49,7 +49,7 @@ class MessageBubble extends StatelessWidget {
             child: Text(message),
           ),
           elevation: 5.0,
-          color: Colors.cyan,
+          color: isMe ? Colors.lightBlueAccent : Colors.white60,
           borderRadius: isMe
               ? BorderRadius.only(
               topLeft: radius,

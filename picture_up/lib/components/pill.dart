@@ -27,14 +27,27 @@ class Pill extends StatelessWidget {
   final Color color;
   final IconData icon;
   final String text;
+  Color bgColor;
 
-  Pill({this.color, this.icon, this.text});
+  Pill({this.color, this.icon, this.text}){
+    if (icon == Icons.create){
+      bgColor = Colors.white54;
+    }
+
+    else if(icon == Icons.check){
+      bgColor = Colors.greenAccent;
+    }
+
+    else{
+      bgColor = Color(0xffffa3a3);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 5.0,
-      color: Color(0xffbde9ff),
+      color: bgColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Row(
         children: [
