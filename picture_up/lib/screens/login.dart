@@ -3,8 +3,32 @@ import 'package:pictureup/constants.dart';
 import 'package:pictureup/screens/room.dart';
 import 'package:random_string/random_string.dart';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-List<String> rooms = ['ababa', 'hagsh'];
+final _firestore = FirebaseFirestore.instance;
+List<String> rooms = []; // Todo: Don't maintain list
+String userName;
+String userCode;
+
+
+void roomStream() async{
+  await for(var snapshot in _firestore.collection('rooms').snapshots()){
+
+    for (var roomData in snapshot.docs){
+      rooms.add((roomData.data()['room_code']).toString());
+    }
+  }
+}
+
+void checkIfRoomExists(String roomCode, BuildContext context) async{
+  await for(var snapshot in _firestore.collection('rooms').snapshots()){
+    for (var roomData in snapshot.docs){
+      if(roomData.data()['room_code'].toString() == roomCode){
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: roomCode)));
+      }
+    }
+  }
+}
 
 String checkRoom(String roomCode){
   int counter = 0;
@@ -35,11 +59,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   @override
   Widget build(BuildContext context) {
-
-    String username;
-    String userCode;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,  // To prevent overflowing when keyboard is triggered
@@ -61,7 +83,8 @@ class _LoginPageState extends State<LoginPage> {
                     kTextFieldDecoration.copyWith(hintText: 'Your Name', labelText: 'Enter your name'),
                 onChanged: (value){
                   setState(() {
-                    username = value;
+                    userName = value;
+                    print(userName);
                   });
                 },
               ),
@@ -72,24 +95,18 @@ class _LoginPageState extends State<LoginPage> {
                     kTextFieldDecoration.copyWith(hintText: 'Room Code', labelText: 'Enter room code'),
                 onChanged: (value){
                   userCode = value;
-                  print(userCode);
                 },
               ),
               RaisedButton(
                 child: Text('Enter room'),
                 onPressed: () {
-                  if(username == ""){
+                  if(userName == null){
                     showModalBottomSheet(context: context, builder: (BuildContext context) => Text('Please fill all the fields'));
                     // Improve vaildation
                   }
                   else{
                     // Check if room exists
-                    for(String room in rooms){
-                      if (room == userCode){
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: 'ababa')));
-                      }
-                    }
-
+                    checkIfRoomExists(userCode, context);
                   }
                 },
                 shape: RoundedRectangleBorder(
@@ -103,8 +120,14 @@ class _LoginPageState extends State<LoginPage> {
               RaisedButton(
                 child: Text('Create a new room'),
                 onPressed: () {
+                  //Todo: Validate that username has been provided
                   String newRoomCode = generateRoom();
+                  // Todo: Write a new function to generate room
                   rooms.add(newRoomCode);
+                  _firestore.collection('rooms').add({
+                    'room_code' : newRoomCode,
+                    'room_owner': userName
+                  });
                   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: newRoomCode)));
                 },
                 shape: RoundedRectangleBorder(

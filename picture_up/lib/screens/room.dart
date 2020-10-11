@@ -44,7 +44,7 @@ class Room extends StatelessWidget {
                     ],
                   ),
                     onPressed: (){
-                       Share.share('abbt');
+                       Share.share(roomCode);
                 }),
               ),
               Container(

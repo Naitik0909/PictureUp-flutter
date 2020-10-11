@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'screens/drawing.dart';
 import 'screens/login.dart';
 import 'screens/room.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
 
 class MyApp extends StatelessWidget {
   @override
