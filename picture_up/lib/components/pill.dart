@@ -38,8 +38,12 @@ class Pill extends StatelessWidget {
       bgColor = Colors.greenAccent;
     }
 
-    else{
+    else if(icon == Icons.remove){
       bgColor = Color(0xffffa3a3);
+    }
+
+    else{
+      bgColor = Colors.lightBlueAccent;
     }
   }
 

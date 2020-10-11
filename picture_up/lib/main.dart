@@ -10,12 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PictureUp',
-      routes: {
-        '/': (context) => LoginPage(),
-        '/room': (context) => Room(),
-        '/game': (context) => DrawingPage(),
-      },
-      initialRoute: '/',
+      home: LoginPage(),
     );
   }
 }
