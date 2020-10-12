@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:painter/painter.dart';
@@ -7,8 +8,15 @@ import 'package:pictureup/components/word_row.dart';
 import 'package:pictureup/components/progress_bar.dart';
 import 'package:pictureup/components/chat_screen.dart';
 
+final _firestore = FirebaseFirestore.instance;
 
 class DrawingPage extends StatefulWidget {
+
+  final String roomID;
+  final String roomCode;
+
+  DrawingPage({this.roomID, this.roomCode});
+
   @override
   _DrawingPageState createState() => _DrawingPageState();
 }
@@ -79,6 +87,9 @@ class _DrawingPageState extends State<DrawingPage> {
             Container(
               constraints: BoxConstraints.tightFor(
                   width: MediaQuery.of(context).size.width, height: 350.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Painter(_controller),
             ),
 //            Icon(Icons.arrow_drop_down),
@@ -113,4 +124,35 @@ class _DrawingPageState extends State<DrawingPage> {
     );
   }
 }
+
+// Todo: PlayerStream Has been directly copied
+
+class PlayerStream extends StatelessWidget {
+
+  final String roomCode;
+  final String roomID;
+
+  String get roomCollection => 'game/'+roomID+'/players';
+
+  PlayerStream({this.roomCode, this.roomID});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection(roomCollection).snapshots(),
+        builder: (context, snapshot){
+          final players = snapshot.data.docs;
+          List<Widget> playersPills = [];
+          for (var player in players){
+            playersPills.add(Pill(color: Colors.blueGrey, icon: null, text: player.data()['username']));
+          }
+          return Column(
+            children: playersPills,
+          );
+        }
+    );
+  }
+}
+
 

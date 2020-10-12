@@ -2,20 +2,13 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pictureup/components/chat_screen.dart';
 import 'package:pictureup/constants.dart';
-import 'package:pictureup/screens/login.dart';
+import 'package:pictureup/screens/drawing.dart';
 import 'package:share/share.dart';
 import 'package:pictureup/components/pill.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firestore = FirebaseFirestore.instance;
-
-List<Widget> players = [
-  Text('Players Joined', style: kH2,),
-  SizedBox(height: 20.0,),
-];
-
 
 class Room extends StatefulWidget {
 
@@ -34,34 +27,10 @@ class _RoomState extends State<Room> {
 
   String get roomCollection => 'game/'+widget.roomID+'/players';
 
-  Future<String> getGameIDCollection(roomCode) async{
-    await for(var snapshot in _firestore.collection('game').snapshots()){
-      for (var roomData in snapshot.docs){
-        String myCollection = 'game/'+roomData.id+'/players';
-        return myCollection;
-      }
-    }
-  }
-
-  void getOnlinePlayers(roomCode) async{
-    String myCollection = await getGameIDCollection(roomCode);
-    await for(var snapshot in _firestore.collection(myCollection).snapshots()){
-      for (var username in snapshot.docs){
-        String user = (username.data()['username']);
-        setState(() {
-          players.add(Pill(color: Colors.blueGrey, icon: null, text: user,));
-
-        });
-        //Todo: Don't add if already exists in the room
-      }
-    }
-  }
-
   void addMe() {
     _firestore.collection(roomCollection).add({
       'username': widget.username,
-    }
-    );
+    });
   }
 
 
@@ -69,8 +38,6 @@ class _RoomState extends State<Room> {
   void initState() {
     print(widget.roomCode);
     addMe();
-//    getOnlinePlayers(widget.roomCode);
-
     super.initState();
   }
 
@@ -92,14 +59,17 @@ class _RoomState extends State<Room> {
 
 
   Future<bool> _backPressed(){
-//    players.removeRange(2, players.length);
     removeMe();
     return Future.value(true);
   }
 
+  void startGame(){
+    //Todo: Do not let users to go back at this point, show a countdowon
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DrawingPage(roomID: widget.roomID, roomCode: widget.roomCode,)));
+  }
+
   @override
   Widget build(BuildContext context) {
-
 
     return WillPopScope(
       onWillPop: _backPressed,
@@ -142,11 +112,14 @@ class _RoomState extends State<Room> {
                   margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                   child: Column(
                     children: <Widget>[
+                      Text('Players Joined', style: kH2,),
+                      SizedBox(height: 10.0,),
                       PlayerStream(username: widget.username, roomCode: widget.roomCode, roomID: widget.roomID,),
                   ]
                   ),
                 ),
-                RaisedButton(onPressed: (){},
+                RaisedButton(
+                  onPressed: widget.isOwner ? (){Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DrawingPage(roomID: widget.roomID, roomCode: widget.roomCode,)));} : null,
                   child: Text('START THE GAME'),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0)),
@@ -156,15 +129,10 @@ class _RoomState extends State<Room> {
             ),
           ),
         ),
-
       ),
     );
   }
-
-
 }
-
-//Todo: Convert whole code into a stream builder
 
 class PlayerStream extends StatelessWidget {
 
