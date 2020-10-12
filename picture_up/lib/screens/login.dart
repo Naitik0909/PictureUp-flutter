@@ -20,11 +20,11 @@ void roomStream() async{
   }
 }
 
-void checkIfRoomExists(String roomCode, BuildContext context) async{
+void checkIfRoomExists(String userName, String roomCode, BuildContext context) async{
   await for(var snapshot in _firestore.collection('rooms').snapshots()){
     for (var roomData in snapshot.docs){
       if(roomData.data()['room_code'].toString() == roomCode){
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: roomCode)));
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: roomCode, username: userName, isOwner: false, roomID: 'm2J1h1wX00AwW1jtR78e',)));
       }
     }
   }
@@ -102,11 +102,13 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   if(userName == null){
                     showModalBottomSheet(context: context, builder: (BuildContext context) => Text('Please fill all the fields'));
-                    // Improve vaildation
+                    // Improve validation
                   }
                   else{
                     // Check if room exists
-                    checkIfRoomExists(userCode, context);
+//                    checkIfRoomExists(userName, userCode, context);
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: 'abcab', username: userName, isOwner: false,)));
+
                   }
                 },
                 shape: RoundedRectangleBorder(
@@ -120,15 +122,15 @@ class _LoginPageState extends State<LoginPage> {
               RaisedButton(
                 child: Text('Create a new room'),
                 onPressed: () {
-                  //Todo: Validate that username has been provided
+                  //Todo: Validate username that has been provided
                   String newRoomCode = generateRoom();
                   // Todo: Write a new function to generate room
-                  rooms.add(newRoomCode);
-                  _firestore.collection('rooms').add({
-                    'room_code' : newRoomCode,
-                    'room_owner': userName
-                  });
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: newRoomCode)));
+//                  rooms.add(newRoomCode);
+//                  _firestore.collection('rooms').add({
+//                    'room_code' : newRoomCode,
+//                    'room_owner': userName
+//                  });
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: "abcab", username: userName, isOwner: true, roomID: 'm2J1h1wX00AwW1jtR78e',)));
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
