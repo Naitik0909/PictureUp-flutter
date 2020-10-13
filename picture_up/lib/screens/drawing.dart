@@ -9,13 +9,18 @@ import 'package:pictureup/components/progress_bar.dart';
 import 'package:pictureup/components/chat_screen.dart';
 
 final _firestore = FirebaseFirestore.instance;
+String chatMessage;
+
 
 class DrawingPage extends StatefulWidget {
-
   final String roomID;
   final String roomCode;
+  final String username;
 
-  DrawingPage({this.roomID, this.roomCode});
+  String get messageCollection => 'game/' + roomID + '/messages';
+
+
+  DrawingPage({this.roomID, this.roomCode, this.username});
 
   @override
   _DrawingPageState createState() => _DrawingPageState();
@@ -30,6 +35,8 @@ class _DrawingPageState extends State<DrawingPage> {
     super.initState();
 //    _finished = false;
     _controller = _newController();
+//    var _pathhistory = PathHistory();
+//    _pathhistory.add(Offset(50.0, 50.0));
   }
 
   PainterController _newController() {
@@ -41,7 +48,9 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   Widget build(BuildContext context) {
+
     List<Widget> actions;
+
     actions = <Widget>[
       IconButton(
           icon: Icon(
@@ -64,7 +73,8 @@ class _DrawingPageState extends State<DrawingPage> {
     ];
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,  // To prevent overflowing when keyboard is triggered
+      resizeToAvoidBottomInset:
+          false, // To prevent overflowing when keyboard is triggered
       appBar: AppBar(
         title: const Text('PictureUp'),
         actions: actions,
@@ -97,12 +107,22 @@ class _DrawingPageState extends State<DrawingPage> {
             // children: [
             Container(
               constraints: BoxConstraints.tightFor(
-                  width: MediaQuery.of(context).size.width,
-                  height: 140.0),
+                  width: MediaQuery.of(context).size.width, height: 140.0),
               child: Row(
                 children: [
-                  Expanded(flex: 2, child: ChatScreen()),
-                  Expanded(flex: 1,child: PlayersPill())
+                  Expanded(
+                    flex: 2,
+                    child: MessageStream(
+                      roomID: widget.roomID,
+                      username: widget.username,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: PlayerStream(
+                      roomID: widget.roomID,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -114,9 +134,21 @@ class _DrawingPageState extends State<DrawingPage> {
                 labelText: 'Enter Your Guess',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: () {},
+                  onPressed: () {
+                    if(chatMessage!=null){
+                      _firestore.collection(widget.messageCollection).add({
+                        'sender': widget.username,
+                        'message': chatMessage
+                      });
+                    }
+                  },
                 ),
               ),
+              onChanged: (value){
+                setState(() {
+                  chatMessage = value;
+                });
+              },
             ),
           ],
         ),
@@ -125,34 +157,81 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 }
 
-// Todo: PlayerStream Has been directly copied
-
 class PlayerStream extends StatelessWidget {
-
-  final String roomCode;
   final String roomID;
 
-  String get roomCollection => 'game/'+roomID+'/players';
+  String get roomCollection => 'game/' + roomID + '/players';
 
-  PlayerStream({this.roomCode, this.roomID});
+  PlayerStream({this.roomID});
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<QuerySnapshot>(
+        // Todo: Add logic for when its empty(From notes)
         stream: _firestore.collection(roomCollection).snapshots(),
-        builder: (context, snapshot){
+        builder: (context, snapshot) {
           final players = snapshot.data.docs;
+          Color colour;
+          IconData icon;
           List<Widget> playersPills = [];
-          for (var player in players){
-            playersPills.add(Pill(color: Colors.blueGrey, icon: null, text: player.data()['username']));
+          for (var player in players) {
+            if (player.data()['is_painter']) {
+              icon = Icons.create;
+              colour = Colors.blueGrey;
+            } else {
+              if (player.data()['has_guessed']) {
+                icon = Icons.check;
+                colour = Colors.green;
+              } else {
+                icon = Icons.remove;
+                colour = Colors.red;
+              }
+            }
+
+            String title = player.data()['username'] +
+                '\n' +
+                player.data()['score'].toString();
+            playersPills.add(Pill(color: colour, icon: icon, text: title));
           }
-          return Column(
+          return ListView(
             children: playersPills,
           );
-        }
-    );
+        });
   }
 }
 
+class MessageStream extends StatelessWidget {
+  final String roomID;
+  final String username;
+  String get messageCollection => 'game/' + roomID + '/messages';
 
+  MessageStream({this.roomID, this.username});
+
+  @override
+  Widget build(BuildContext context) {
+    final Radius radius = Radius.circular(10.0);
+    // Todo: Add logic for when its empty
+    return StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection(messageCollection).snapshots(),
+        builder: (context, snapshot) {
+          // Todo: Show messages in proper order
+          final messages = snapshot.data.docs;
+          List<Widget> messageBubbles = [];
+          for (var message in messages) {
+            String sender = message.data()['sender'];
+            String msg = message.data()['message'];
+
+            messageBubbles.add(
+                MessageBubble(
+                    radius: radius,
+                    isMe: sender == username ? true : false,
+                    sender: sender,
+                    message: msg,
+            ));
+          }
+          return ListView(
+            children: messageBubbles,
+          );
+        });
+  }
+}

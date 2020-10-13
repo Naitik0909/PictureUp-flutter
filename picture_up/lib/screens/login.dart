@@ -4,6 +4,7 @@ import 'package:pictureup/screens/room.dart';
 import 'package:random_string/random_string.dart';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 final _firestore = FirebaseFirestore.instance;
 List<String> rooms = []; // Todo: Don't maintain list
@@ -64,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      // Todo: Implement provider package to provide and listen to username
       resizeToAvoidBottomInset: false,  // To prevent overflowing when keyboard is triggered
 
       appBar: AppBar(
@@ -106,8 +108,8 @@ class _LoginPageState extends State<LoginPage> {
                   }
                   else{
                     // Check if room exists
-//                    checkIfRoomExists(userName, userCode, context);
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: 'abcab', username: userName, isOwner: false,)));
+                    checkIfRoomExists(userName, userCode, context);
+//                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: 'abcab', username: userName, isOwner: false,)));
 
                   }
                 },

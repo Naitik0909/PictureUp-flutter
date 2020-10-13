@@ -28,8 +28,12 @@ class _RoomState extends State<Room> {
   String get roomCollection => 'game/'+widget.roomID+'/players';
 
   void addMe() {
+    // Todo: Owner plays first!
     _firestore.collection(roomCollection).add({
       'username': widget.username,
+      'is_painter': widget.isOwner ? true : false,
+      'has_guessed': false,
+      'score': 0
     });
   }
 
@@ -119,7 +123,7 @@ class _RoomState extends State<Room> {
                   ),
                 ),
                 RaisedButton(
-                  onPressed: widget.isOwner ? (){Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DrawingPage(roomID: widget.roomID, roomCode: widget.roomCode,)));} : null,
+                  onPressed: widget.isOwner ? (){Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DrawingPage(username: widget.username,roomID: widget.roomID, roomCode: widget.roomCode,)));} : null,
                   child: Text('START THE GAME'),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0)),
@@ -148,6 +152,7 @@ class PlayerStream extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return StreamBuilder<QuerySnapshot>(
+      // Todo: Add logic for when its empty(From notes)
       stream: _firestore.collection(roomCollection).snapshots(),
       builder: (context, snapshot){
           final players = snapshot.data.docs;
