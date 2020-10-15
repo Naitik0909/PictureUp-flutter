@@ -1,30 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-class ChatScreen extends StatelessWidget {
-//
-//  final bool isMe;
-//  ChatScreen({this.isMe});
-//
-  @override
-  Widget build(BuildContext context) {
-
-    final Radius radius = Radius.circular(10.0);
-    return ListView(
-      padding: const EdgeInsets.all(5.0),
-      children: [
-        MessageBubble(radius: radius, isMe: false, sender: 'Ashish', message: 'Container',),
-        SizedBox(height: 5.0,),
-        MessageBubble(radius: radius, isMe: false, sender: 'Jayanth', message: 'Bucket',),
-        SizedBox(height: 5.0,),
-        MessageBubble(radius: radius, isMe: true, sender: 'Naitik', message: 'You guys are wrong!',),
-        SizedBox(height: 5.0,),
-        MessageBubble(radius: radius, isMe: false, sender: 'Nalin', message: 'Vin Diesel',),
-      ],
-    );
-  }
-}
-
 class MessageBubble extends StatelessWidget {
   final bool isMe;
   final Radius radius;

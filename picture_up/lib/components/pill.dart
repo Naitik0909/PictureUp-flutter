@@ -1,27 +1,5 @@
 import 'package:flutter/material.dart';
 
-class PlayersPill extends StatelessWidget {
-
-//  final Icon myIcon;
-//  final String myName;
-//  final Color myColor;
-//
-//  PlayersPill({this.myIcon, this.myColor, this.myName});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return ListView(
-      children: [
-        Pill(icon: Icons.create, color: Colors.blueGrey, text: 'Naitik\n450',),
-        Pill(icon: Icons.check, color: Colors.green, text: 'Jayanth\n520',),
-        Pill(icon: Icons.remove, color: Colors.red, text: 'Ashish\n850',),
-        Pill(icon: Icons.remove, color: Colors.red, text: 'Nalin\n1050',),
-      ],
-    );
-  }
-}
-
 class Pill extends StatelessWidget {
 
   final Color color;

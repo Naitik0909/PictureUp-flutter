@@ -7,6 +7,8 @@ import 'package:pictureup/components/pill.dart';
 import 'package:pictureup/components/word_row.dart';
 import 'package:pictureup/components/progress_bar.dart';
 import 'package:pictureup/components/chat_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:pictureup/main.dart';
 
 final _firestore = FirebaseFirestore.instance;
 String chatMessage;
@@ -18,6 +20,7 @@ class DrawingPage extends StatefulWidget {
   final String username;
 
   String get messageCollection => 'game/' + roomID + '/messages';
+
 
 
   DrawingPage({this.roomID, this.roomCode, this.username});
@@ -37,6 +40,8 @@ class _DrawingPageState extends State<DrawingPage> {
     _controller = _newController();
 //    var _pathhistory = PathHistory();
 //    _pathhistory.add(Offset(50.0, 50.0));
+
+
   }
 
   PainterController _newController() {
@@ -50,7 +55,6 @@ class _DrawingPageState extends State<DrawingPage> {
   Widget build(BuildContext context) {
 
     List<Widget> actions;
-
     actions = <Widget>[
       IconButton(
           icon: Icon(
@@ -73,8 +77,7 @@ class _DrawingPageState extends State<DrawingPage> {
     ];
 
     return Scaffold(
-      resizeToAvoidBottomInset:
-          false, // To prevent overflowing when keyboard is triggered
+      resizeToAvoidBottomInset: false,  // To prevent overflowing when keyboard is triggered
       appBar: AppBar(
         title: const Text('PictureUp'),
         actions: actions,
@@ -135,12 +138,15 @@ class _DrawingPageState extends State<DrawingPage> {
                 suffixIcon: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    if(chatMessage!=null){
-                      _firestore.collection(widget.messageCollection).add({
-                        'sender': widget.username,
-                        'message': chatMessage
-                      });
-                    }
+//                    if(chatMessage!=null){
+//                      _firestore.collection(widget.messageCollection).add({
+//                        'sender': widget.username,
+//                        'message': chatMessage
+//                      });
+//                    }
+                  setState(() {
+                    // Refresh
+                  });
                   },
                 ),
               ),
@@ -161,11 +167,23 @@ class PlayerStream extends StatelessWidget {
   final String roomID;
 
   String get roomCollection => 'game/' + roomID + '/players';
+  String get roundCollection => 'game/' + roomID + '/round';
 
   PlayerStream({this.roomID});
 
+
   @override
   Widget build(BuildContext context) {
+
+    List<Pill> playersPills = [];
+    Future<int> getRoundNo() async{
+      final getRoundDetails = await _firestore.collection(roundCollection).get();
+      final roundNo = getRoundDetails.docs[0].data()['round_no'];
+      return roundNo;
+      playersPills[roundNo-1].
+    }
+
+
     return StreamBuilder<QuerySnapshot>(
         // Todo: Add logic for when its empty(From notes)
         stream: _firestore.collection(roomCollection).snapshots(),
@@ -173,7 +191,6 @@ class PlayerStream extends StatelessWidget {
           final players = snapshot.data.docs;
           Color colour;
           IconData icon;
-          List<Widget> playersPills = [];
           for (var player in players) {
             if (player.data()['is_painter']) {
               icon = Icons.create;
@@ -193,6 +210,8 @@ class PlayerStream extends StatelessWidget {
                 player.data()['score'].toString();
             playersPills.add(Pill(color: colour, icon: icon, text: title));
           }
+          print(playersPills[1].text);
+          getRoundNo();
           return ListView(
             children: playersPills,
           );
@@ -230,6 +249,7 @@ class MessageStream extends StatelessWidget {
             ));
           }
           return ListView(
+            reverse: true,
             children: messageBubbles,
           );
         });

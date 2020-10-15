@@ -7,6 +7,7 @@ import 'package:pictureup/screens/drawing.dart';
 import 'package:share/share.dart';
 import 'package:pictureup/components/pill.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pictureup/models/players.dart';
 
 final _firestore = FirebaseFirestore.instance;
 
