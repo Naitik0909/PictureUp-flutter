@@ -175,12 +175,11 @@ class PlayerStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List<Pill> playersPills = [];
+
     Future<int> getRoundNo() async{
       final getRoundDetails = await _firestore.collection(roundCollection).get();
       final roundNo = getRoundDetails.docs[0].data()['round_no'];
       return roundNo;
-      playersPills[roundNo-1].
     }
 
 
@@ -188,34 +187,71 @@ class PlayerStream extends StatelessWidget {
         // Todo: Add logic for when its empty(From notes)
         stream: _firestore.collection(roomCollection).snapshots(),
         builder: (context, snapshot) {
-          final players = snapshot.data.docs;
-          Color colour;
-          IconData icon;
-          for (var player in players) {
-            if (player.data()['is_painter']) {
-              icon = Icons.create;
-              colour = Colors.blueGrey;
-            } else {
-              if (player.data()['has_guessed']) {
-                icon = Icons.check;
-                colour = Colors.green;
-              } else {
-                icon = Icons.remove;
-                colour = Colors.red;
-              }
-            }
+          if (snapshot.hasData) {
+            List<Pill> playersPills = [];
+            final players = snapshot.data.docs;
+            Color colour;
+            IconData icon;
+            int roundNo;
 
-            String title = player.data()['username'] +
-                '\n' +
-                player.data()['score'].toString();
-            playersPills.add(Pill(color: colour, icon: icon, text: title));
+            return FutureBuilder(
+              future: getRoundNo().then((value){
+                roundNo = value;
+                // Todo: Check if currentPainter has already painter
+                int counter=0;
+                for (var player in players) {
+//                  player.data()['is_painter'] = counter == roundNo-1 ? true : false;
+                  if(counter == roundNo-1){
+                    _firestore.collection(roomCollection).doc(player.id).update({'is_painter' : true});
+                  }
+                  else{
+                    if(player.data()['is_painter'] == true){
+                      _firestore.collection(roomCollection).doc(player.id).update({'is_painter' : false});
+                    }
+
+                  }
+                  if (player.data()['is_painter']) {
+                    icon = Icons.create;
+                    colour = Colors.blueGrey;
+                  } else {
+                    if (player.data()['has_guessed']) {
+                      icon = Icons.check;
+                      colour = Colors.green;
+                    } else {
+                      icon = Icons.remove;
+                      colour = Colors.red;
+                    }
+                  }
+
+                  String title = player.data()['username'] +
+                      '\n' +
+                      player.data()['score'].toString();
+                  playersPills.add(Pill(color: colour, icon: icon, text: title));
+                  counter+=1;
+                }
+                print(playersPills[0].text);
+                return ListView(
+                  children: playersPills,
+                );
+              }),
+                builder: (context, AsyncSnapshot<ListView> snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data;
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+
+            );
           }
-          print(playersPills[1].text);
-          getRoundNo();
-          return ListView(
-            children: playersPills,
+
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.lightBlueAccent,
+            ),
           );
         });
+
   }
 }
 

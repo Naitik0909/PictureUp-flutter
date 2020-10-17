@@ -29,10 +29,10 @@ class _RoomState extends State<Room> {
   String get roomCollection => 'game/'+widget.roomID+'/players';
 
   void addMe() {
-    // Todo: Owner plays first!
+    // Todo: Owner does not play first!
     _firestore.collection(roomCollection).add({
       'username': widget.username,
-      'is_painter': widget.isOwner ? true : false,
+      'is_painter': false,
       'has_guessed': false,
       'score': 0
     });
