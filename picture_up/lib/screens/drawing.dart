@@ -9,6 +9,7 @@ import 'package:pictureup/components/progress_bar.dart';
 import 'package:pictureup/components/chat_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pictureup/main.dart';
+import 'dart:async';
 
 final _firestore = FirebaseFirestore.instance;
 String chatMessage;
@@ -40,8 +41,6 @@ class _DrawingPageState extends State<DrawingPage> {
     _controller = _newController();
 //    var _pathhistory = PathHistory();
 //    _pathhistory.add(Offset(50.0, 50.0));
-
-
   }
 
   PainterController _newController() {
