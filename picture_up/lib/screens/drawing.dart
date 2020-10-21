@@ -21,7 +21,7 @@ class DrawingPage extends StatefulWidget {
   final String username;
 
   String get messageCollection => 'game/' + roomID + '/messages';
-
+  String get roundCollection => 'game/' + roomID + '/round';
 
 
   DrawingPage({this.roomID, this.roomCode, this.username});
@@ -34,6 +34,8 @@ class _DrawingPageState extends State<DrawingPage> {
 //  bool _finished;
   PainterController _controller;
 
+
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,8 @@ class _DrawingPageState extends State<DrawingPage> {
     _controller = _newController();
 //    var _pathhistory = PathHistory();
 //    _pathhistory.add(Offset(50.0, 50.0));
+
+
   }
 
   PainterController _newController() {
@@ -52,6 +56,47 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    Future<void> _askedToLead() async{
+      await showDialog(
+        context: context,
+        child: SimpleDialog(
+          title: const Text('Select assignment'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () { WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pop(context);
+              }); },
+              child: const Text('Treasury department'),
+            ),
+            SimpleDialogOption(
+              onPressed: () { WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pop(context);
+              }); },
+              child: const Text('State department'),
+            ),
+          ],
+        ),
+
+      );
+
+    }
+
+        void newRound() async{
+          //Todo: Find out who is painter
+
+          //Todo: Let the painter choose a word(Show a modal)
+
+          //Todo: Prevent timer restart for non-painters
+
+          // Increment round_no
+          final roundNo = await _firestore.collection(widget.roundCollection).get();
+          final roundId = roundNo.docs[0].id;
+          final prev = roundNo.docs[0].data()['round_no'];
+//          _firestore.collection(widget.roundCollection).doc(roundId).update({'round_no': prev+1});
+          print("ITS A NEW ROUND!");
+    }
+    newRound();
 
     List<Widget> actions;
     actions = <Widget>[
@@ -143,7 +188,8 @@ class _DrawingPageState extends State<DrawingPage> {
 //                        'message': chatMessage
 //                      });
 //                    }
-                  setState(() {
+
+                    setState(() {
                     // Refresh
                   });
                   },

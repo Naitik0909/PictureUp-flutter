@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'dart:async';
 
-
 class ProgressBar extends StatefulWidget {
-
   @override
   _ProgressBarState createState() => _ProgressBarState();
 }
 
 class _ProgressBarState extends State<ProgressBar> {
-
   Timer _timer;
   int _start = 60;
 
@@ -18,8 +15,8 @@ class _ProgressBarState extends State<ProgressBar> {
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
-          (Timer timer) => setState(
-            () {
+      (Timer timer) => setState(
+        () {
           if (_start < 1) {
             _start = 60;
           } else {
@@ -43,21 +40,26 @@ class _ProgressBarState extends State<ProgressBar> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         LinearPercentIndicator(
-          width: MediaQuery.of(context).size.width-75.0,
+          animation: true,
+          animateFromLastPercent: true,
+          width: MediaQuery.of(context).size.width - 75.0,
           lineHeight: 20.0,
-          percent: _start/60,
+          percent: _start / 60,
           backgroundColor: Colors.grey,
-          progressColor: Colors.blue,
+          progressColor: _start > 10 ? Colors.blue : Color(0xffff7070),
         ),
-        CircleAvatar(child: Text("$_start"), radius: 15.0,)
+        CircleAvatar(
+          child: Text("$_start"),
+          radius: 15.0,
+          foregroundColor: Colors.white,
+          backgroundColor: _start > 10 ? Colors.blue : Color(0xffff7070),
+        )
       ],
     );
   }
