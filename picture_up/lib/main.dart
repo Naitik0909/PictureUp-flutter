@@ -31,6 +31,10 @@ class UserProviderData extends ChangeNotifier{
   String roomCode;
   String roomID;
   bool isOwner;
+  // No use for now -
+//  String get messageCollection => 'game/' + roomID + '/messages';
+//  String get roundCollection => 'game/' + roomID + '/round';
+//  bool isPainter = false;
 
   void setUsername(String newUsername){
     username = newUsername;
@@ -49,5 +53,6 @@ class UserProviderData extends ChangeNotifier{
 
   void setRoomID(String newRoomId){
     roomID = newRoomId;
+    notifyListeners();
   }
 }

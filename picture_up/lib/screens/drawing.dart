@@ -18,15 +18,9 @@ String chatMessage;
 
 
 class DrawingPage extends StatefulWidget {
-  final String roomID;
-  final String roomCode;
-  final String username;
 
-  String get messageCollection => 'game/' + roomID + '/messages';
-  String get roundCollection => 'game/' + roomID + '/round';
-
-
-  DrawingPage({this.roomID, this.roomCode, this.username});
+//  String get messageCollection => 'game/' + roomID + '/messages';
+//  String get roundCollection => 'game/' + roomID + '/round';
 
   @override
   _DrawingPageState createState() => _DrawingPageState();
@@ -35,8 +29,8 @@ class DrawingPage extends StatefulWidget {
 class _DrawingPageState extends State<DrawingPage> {
 //  bool _finished;
   PainterController _controller;
-
-
+  String get messageCollection => 'game/' + Provider.of<UserProviderData>(context, listen: false).roomID + '/messages';
+  String get roundCollection => 'game/' + Provider.of<UserProviderData>(context, listen: false).roomID + '/round';
 
   @override
   void initState() {
@@ -128,7 +122,7 @@ class _DrawingPageState extends State<DrawingPage> {
           //Todo: Prevent timer restart for non-painters
 
           // Increment round_no
-          final roundNo = await _firestore.collection(widget.roundCollection).get();
+          final roundNo = await _firestore.collection(roundCollection).get();
           final roundId = roundNo.docs[0].id;
           final prev = roundNo.docs[0].data()['round_no'];
 //          _firestore.collection(widget.roundCollection).doc(roundId).update({'round_no': prev+1});
@@ -177,7 +171,7 @@ class _DrawingPageState extends State<DrawingPage> {
             ProgressBar(),
             WordRow(),
             SizedBox(
-              height: 3.0,
+              height: 1.0,
             ),
             Container(
               constraints: BoxConstraints.tightFor(
@@ -198,14 +192,14 @@ class _DrawingPageState extends State<DrawingPage> {
                   Expanded(
                     flex: 2,
                     child: MessageStream(
-                      roomID: widget.roomID,
-                      username: widget.username,
+                      roomID: Provider.of<UserProviderData>(context, listen: false).roomID,
+                      username: Provider.of<UserProviderData>(context, listen: false).username,
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: PlayerStream(
-                      roomID: widget.roomID,
+                      roomID: Provider.of<UserProviderData>(context, listen: false).roomID,
                     ),
                   ),
                 ],

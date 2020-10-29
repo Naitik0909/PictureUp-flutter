@@ -10,7 +10,8 @@ class WordRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('BUCKET',
+        Text(
+          'BUCKET',
           style: TextStyle(
             decoration: TextDecoration.underline,
             letterSpacing: 7,

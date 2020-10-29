@@ -66,10 +66,7 @@ class _RoomState extends State<Room> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (BuildContext context) => DrawingPage(
-                  roomID: Provider.of<UserProviderData>(context).roomID,
-                  roomCode: Provider.of<UserProviderData>(context).roomCode,
-                )));
+            builder: (BuildContext context) => DrawingPage()));
   }
 
   @override
@@ -141,11 +138,7 @@ class _RoomState extends State<Room> {
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      DrawingPage(
-                                        username: Provider.of<UserProviderData>(context).username,
-                                        roomID: Provider.of<UserProviderData>(context).roomID,
-                                        roomCode: Provider.of<UserProviderData>(context).roomCode,
-                                      )));
+                                      DrawingPage()));
                         }
                       : null,
                   child: Text('START THE GAME'),
