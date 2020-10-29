@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pictureup/constants.dart';
+import 'package:pictureup/main.dart';
 import 'package:pictureup/screens/room.dart';
 import 'package:random_string/random_string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -131,6 +132,8 @@ class _LoginPageState extends State<LoginPage> {
 //                    'room_code' : newRoomCode,
 //                    'room_owner': userName
 //                  });
+                  Provider.of<UserProviderData>(context, listen: false).setUsername(userName);
+                  // Passed listen = false because provider used on button press
                   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: "abcab", username: userName, isOwner: true, roomID: 'm2J1h1wX00AwW1jtR78e',)));
                 },
                 shape: RoundedRectangleBorder(

@@ -16,10 +16,21 @@ void main() async{
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PictureUp',
-      home: LoginPage(),
+    return ChangeNotifierProvider<UserProviderData>(
+      create: (_) => UserProviderData(),
+      child: MaterialApp(
+        title: 'PictureUp',
+        home: LoginPage(),
+      ),
     );
   }
 }
 
+class UserProviderData extends ChangeNotifier{
+  String username = 'NULL';
+
+  void setUsername(String newUsername){
+    username = newUsername;
+    notifyListeners();
+  }
+}

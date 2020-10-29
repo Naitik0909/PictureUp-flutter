@@ -8,6 +8,7 @@ import 'package:share/share.dart';
 import 'package:pictureup/components/pill.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pictureup/models/players.dart';
+import 'package:provider/provider.dart';
 
 final _firestore = FirebaseFirestore.instance;
 

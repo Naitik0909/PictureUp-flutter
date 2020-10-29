@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:painter/painter.dart';
+import 'package:pictureup/components/alert.dart';
 import 'draw_bar.dart';
 import 'package:pictureup/components/pill.dart';
 import 'package:pictureup/components/word_row.dart';
@@ -10,6 +11,7 @@ import 'package:pictureup/components/chat_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pictureup/main.dart';
 import 'dart:async';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 final _firestore = FirebaseFirestore.instance;
 String chatMessage;
@@ -43,8 +45,6 @@ class _DrawingPageState extends State<DrawingPage> {
     _controller = _newController();
 //    var _pathhistory = PathHistory();
 //    _pathhistory.add(Offset(50.0, 50.0));
-
-
   }
 
   PainterController _newController() {
@@ -56,6 +56,13 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+//    showDialog(
+////      context: context,
+////      builder: (BuildContext dialogContext) {
+////        return MyAlertDialog(title: 'Title', content: 'Dialog content');
+////      },
+////    );
 
     Future<void> _askedToLead() async{
       await showDialog(
@@ -80,6 +87,37 @@ class _DrawingPageState extends State<DrawingPage> {
 
       );
 
+    }
+    void getAlert(){
+      Alert(
+          context: context,
+          title: "LOGIN",
+          content: Column(
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.account_circle),
+                  labelText: 'Username',
+                ),
+              ),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock),
+                  labelText: 'Password',
+                ),
+              ),
+            ],
+          ),
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                "LOGIN",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            )
+          ]).show();
     }
 
         void newRound() async{
@@ -178,7 +216,7 @@ class _DrawingPageState extends State<DrawingPage> {
             TextField(
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                labelText: 'Enter Your Guess',
+                labelText: context.read<String>(),
                 suffixIcon: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
@@ -188,10 +226,6 @@ class _DrawingPageState extends State<DrawingPage> {
 //                        'message': chatMessage
 //                      });
 //                    }
-
-                    setState(() {
-                    // Refresh
-                  });
                   },
                 ),
               ),
