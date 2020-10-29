@@ -216,10 +216,11 @@ class _DrawingPageState extends State<DrawingPage> {
             TextField(
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                labelText: context.read<String>(),
+                labelText: 'Enter Your Guess',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
+
 //                    if(chatMessage!=null){
 //                      _firestore.collection(widget.messageCollection).add({
 //                        'sender': widget.username,

@@ -27,10 +27,27 @@ class MyApp extends StatelessWidget {
 }
 
 class UserProviderData extends ChangeNotifier{
-  String username = 'NULL';
+  String username;
+  String roomCode;
+  String roomID;
+  bool isOwner;
 
   void setUsername(String newUsername){
     username = newUsername;
     notifyListeners();
+  }
+
+  void setRoomCode(String newRoomCode){
+    roomCode = newRoomCode;
+    notifyListeners();
+  }
+
+  void setOwner(bool newIsOwner){
+    isOwner = newIsOwner;
+    notifyListeners();
+  }
+
+  void setRoomID(String newRoomId){
+    roomID = newRoomId;
   }
 }

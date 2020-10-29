@@ -25,7 +25,13 @@ void checkIfRoomExists(String userName, String roomCode, BuildContext context) a
   await for(var snapshot in _firestore.collection('rooms').snapshots()){
     for (var roomData in snapshot.docs){
       if(roomData.data()['room_code'].toString() == roomCode){
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: roomCode, username: userName, isOwner: false, roomID: 'm2J1h1wX00AwW1jtR78e',)));
+
+        Provider.of<UserProviderData>(context, listen: false).username = userName;
+        Provider.of<UserProviderData>(context, listen: false).roomCode = roomCode;
+        Provider.of<UserProviderData>(context, listen: false).isOwner = false;
+        Provider.of<UserProviderData>(context, listen: false).roomID = 'm2J1h1wX00AwW1jtR78e';
+
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room()));
       }
     }
   }
@@ -132,9 +138,12 @@ class _LoginPageState extends State<LoginPage> {
 //                    'room_code' : newRoomCode,
 //                    'room_owner': userName
 //                  });
-                  Provider.of<UserProviderData>(context, listen: false).setUsername(userName);
-                  // Passed listen = false because provider used on button press
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room(roomCode: "abcab", username: userName, isOwner: true, roomID: 'm2J1h1wX00AwW1jtR78e',)));
+                  Provider.of<UserProviderData>(context, listen: false).username = userName;
+                  Provider.of<UserProviderData>(context, listen: false).roomCode = 'abcab';
+                  Provider.of<UserProviderData>(context, listen: false).isOwner = true;
+                  Provider.of<UserProviderData>(context, listen: false).roomID = 'm2J1h1wX00AwW1jtR78e';
+
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Room()));
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
