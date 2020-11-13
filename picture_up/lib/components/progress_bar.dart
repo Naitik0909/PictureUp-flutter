@@ -3,8 +3,14 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'dart:async';
 
 class ProgressBar extends StatefulWidget {
+
+//  final Function callbackStartTimer;
+//  ProgressBar({this.callbackStartTimer});
+//
   @override
   _ProgressBarState createState() => _ProgressBarState();
+
+
 }
 
 class _ProgressBarState extends State<ProgressBar> {

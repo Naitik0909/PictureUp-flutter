@@ -12,9 +12,12 @@ import 'package:provider/provider.dart';
 import 'package:pictureup/main.dart';
 import 'dart:async';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:pictureup/models/word_library.dart';
 
 final _firestore = FirebaseFirestore.instance;
 String chatMessage;
+var wordGenerator = WordLibrary();
+String myWord="-";
 
 
 class DrawingPage extends StatefulWidget {
@@ -51,68 +54,13 @@ class _DrawingPageState extends State<DrawingPage> {
   @override
   Widget build(BuildContext context) {
 
-//    showDialog(
-////      context: context,
-////      builder: (BuildContext dialogContext) {
-////        return MyAlertDialog(title: 'Title', content: 'Dialog content');
-////      },
-////    );
 
-    Future<void> _askedToLead() async{
-      await showDialog(
-        context: context,
-        child: SimpleDialog(
-          title: const Text('Select assignment'),
-          children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () { WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pop(context);
-              }); },
-              child: const Text('Treasury department'),
-            ),
-            SimpleDialogOption(
-              onPressed: () { WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pop(context);
-              }); },
-              child: const Text('State department'),
-            ),
-          ],
-        ),
-
-      );
-
-    }
-    void getAlert(){
-      Alert(
-          context: context,
-          title: "LOGIN",
-          content: Column(
-            children: <Widget>[
-              TextField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.account_circle),
-                  labelText: 'Username',
-                ),
-              ),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  icon: Icon(Icons.lock),
-                  labelText: 'Password',
-                ),
-              ),
-            ],
-          ),
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                "LOGIN",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            )
-          ]).show();
-    }
+//      void getWord(String roundCollection) async{
+//          final getRoundDetails = await _firestore.collection(roundCollection).get();
+//          setState(() {
+//            myWord = getRoundDetails.docs[0].data()['word'];
+//          });
+//      }
 
         void newRound() async{
           //Todo: Find out who is painter
@@ -249,11 +197,62 @@ class PlayerStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final String word1 = wordGenerator.getAWord();
+    final String word2 = wordGenerator.getAWord();
+    final String word3 = wordGenerator.getAWord();
 
     Future<int> getRoundNo() async{
       final getRoundDetails = await _firestore.collection(roundCollection).get();
       final roundNo = getRoundDetails.docs[0].data()['round_no'];
       return roundNo;
+    }
+
+    void getAlert(){
+      Alert(
+          context: context,
+          title: "You are drawing!\nSelect a word:",
+          content: Column(children: [
+            DialogButton(
+              onPressed: () async{
+                final roundNo = await _firestore.collection(roundCollection).get();
+                final roundId = roundNo.docs[0].id;
+                _firestore.collection(roundCollection).doc(roundId).update({'word': word1});
+
+                Navigator.pop(context);
+              },
+              child: Text(word1,
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+            DialogButton(
+              onPressed: () async{
+                final roundNo = await _firestore.collection(roundCollection).get();
+                final roundId = roundNo.docs[0].id;
+                _firestore.collection(roundCollection).doc(roundId).update({'word': word2});
+
+                Navigator.pop(context);
+              },
+              child: Text(word2,
+                style: TextStyle(color: Colors.white, fontSize: 20),
+
+              ),
+            ),
+            DialogButton(
+              onPressed: () async{
+                final roundNo = await _firestore.collection(roundCollection).get();
+                final roundId = roundNo.docs[0].id;
+                _firestore.collection(roundCollection).doc(roundId).update({'word': word3});
+
+                Navigator.pop(context);
+              },
+              child: Text(word3,
+                style: TextStyle(color: Colors.white, fontSize: 20),
+
+              ),
+            ),
+          ],),
+
+          ).show();
     }
 
 
@@ -271,8 +270,8 @@ class PlayerStream extends StatelessWidget {
             return FutureBuilder(
               future: getRoundNo().then((value){
                 roundNo = value;
-                // Todo: Check if currentPainter has already painter
-                int counter=0;
+                // Todo: Check if currentPainter has already painted
+                int counter=0;   // Keep this zero only
                 for (var player in players) {
 //                  player.data()['is_painter'] = counter == roundNo-1 ? true : false;
                   if(counter == roundNo-1){
@@ -284,6 +283,8 @@ class PlayerStream extends StatelessWidget {
                     }
 
                   }
+
+
                   if (player.data()['is_painter']) {
                     icon = Icons.create;
                     colour = Colors.blueGrey;
@@ -294,6 +295,15 @@ class PlayerStream extends StatelessWidget {
                     } else {
                       icon = Icons.remove;
                       colour = Colors.red;
+                    }
+                  }
+
+                  // Check if current user is the painter
+                  if (Provider.of<UserProviderData>(context, listen: false).username == player.data()['username']){
+                    if (player.data()['is_painter']){
+
+                      // Let him choose the word
+                      getAlert();
                     }
                   }
 

@@ -5,13 +5,14 @@ class WordRow extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'BUCKET',
+          myWord,
           style: TextStyle(
             decoration: TextDecoration.underline,
             letterSpacing: 7,
